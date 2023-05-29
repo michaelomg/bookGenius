@@ -286,7 +286,7 @@ export const ChatInput = ({
             onKeyDown={(e) => {}}
           >
             {plugin ? <IconBrandGoogle size={20} /> : <IconBolt size={20} />}
-          </button>*/}
+          </button>
 
           {showPluginSelect && (
             <div className="absolute left-0 bottom-14 rounded bg-white dark:bg-[#343541]">
@@ -309,7 +309,7 @@ export const ChatInput = ({
                 }}
               />
             </div>
-          )}
+          )}*/}
 
           <textarea
             ref={textareaRef}
@@ -325,7 +325,7 @@ export const ChatInput = ({
               }`,
             }}
             placeholder={
-              t('Type a message or type "/" to select a prompt...') || ''
+              t('Type a message to explore...') || ''
             }
             value={content}
             rows={1}
