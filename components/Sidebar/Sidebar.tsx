@@ -2,10 +2,10 @@ import { IconFolderPlus, IconMistOff, IconPlus } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/*import {
+import {
   CloseSidebarButton,
   OpenSidebarButton,
-} from './components/OpenCloseButton';*/
+} from './components/OpenCloseButton';
 
 import Search from '../Search';
 
