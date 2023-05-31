@@ -41,6 +41,11 @@ import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  standardFolders,
+  standardPrompts,
+} from '@/utils/data/folders';
+
 interface Props {
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
@@ -249,7 +254,7 @@ const Home = ({
   }, [defaultModelId, serverSideApiKeyIsSet, serverSidePluginKeysSet]);
 
   // ON LOAD --------------------------------------------
-
+  
   useEffect(() => {
     const settings = getSettings();
     if (settings.theme) {
@@ -295,11 +300,47 @@ const Home = ({
     const folders = localStorage.getItem('folders');
     if (folders) {
       dispatch({ field: 'folders', value: JSON.parse(folders) });
-    }
+    } else {
+      const standardFolders = [
+          {
+              id: 1,
+              name: '1 Discover',
+              type: "prompt",
+          },
+          {
+              id: 2,
+              name: '2 Inspect',
+              type: "prompt",
+          },
+          {
+              id: 3,
+              name: '3 Action',
+              type: "prompt",
+          },
+      ];
+      dispatch({ field: 'folders', value: standardFolders});
+    } 
 
     const prompts = localStorage.getItem('prompts');
     if (prompts) {
       dispatch({ field: 'prompts', value: JSON.parse(prompts) });
+    } else {
+      const standardPrompts = [
+          {
+              id: uuidv4(),
+              name: 'test',
+              description: "test",
+              content: 'test',
+              model: {
+                  id: "gpt-3.5-turbo",
+                  name: "GPT-3.5",
+                  maxLength: 12000,
+                  tokenLimit: 4000
+                },
+              folderId: 1,
+          },
+      ];
+        dispatch({ field: 'prompts', value: standardPrompts});
     }
 
     const conversationHistory = localStorage.getItem('conversationHistory');
