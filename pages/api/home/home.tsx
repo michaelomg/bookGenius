@@ -41,10 +41,10 @@ import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import {
+/*import {
   standardFolders,
   standardPrompts,
-} from '@/utils/data/folders';
+} from '@/utils/data/folders';*/
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
@@ -254,7 +254,7 @@ const Home = ({
   }, [defaultModelId, serverSideApiKeyIsSet, serverSidePluginKeysSet]);
 
   // ON LOAD --------------------------------------------
-  
+  //localStorage.clear();
   useEffect(() => {
     const settings = getSettings();
     if (settings.theme) {
@@ -306,16 +306,19 @@ const Home = ({
               id: 1,
               name: '1 Discover',
               type: "prompt",
+              system: true,
           },
           {
               id: 2,
               name: '2 Inspect',
               type: "prompt",
+              system: true,
           },
           {
               id: 3,
               name: '3 Action',
               type: "prompt",
+              system: true,
           },
       ];
       dispatch({ field: 'folders', value: standardFolders});
@@ -338,6 +341,7 @@ const Home = ({
                   tokenLimit: 4000
                 },
               folderId: 1,
+              system: true,
           },
       ];
         dispatch({ field: 'prompts', value: standardPrompts});

@@ -87,7 +87,7 @@ const Folder = ({
     if (searchTerm) {
       setIsOpen(true);
     } else {
-      setIsOpen(false);
+      setIsOpen(true);
     }
   }, [searchTerm]);
 
@@ -127,11 +127,12 @@ const Folder = ({
 
             <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-3">
               {currentFolder.name}
+              
             </div>
           </button>
         )}
-
-        {(isDeleting || isRenaming) && (
+        
+        {!currentFolder.system && (isDeleting || isRenaming) && (
           <div className="absolute right-1 z-10 flex text-gray-300">
             <SidebarActionButton
               handleClick={(e) => {
@@ -161,7 +162,7 @@ const Folder = ({
           </div>
         )}
 
-        {!isDeleting && !isRenaming && (
+        {!currentFolder.system && !isDeleting && !isRenaming && (
           <div className="absolute right-1 z-10 flex text-gray-300">
             <SidebarActionButton
               handleClick={(e) => {
@@ -183,7 +184,7 @@ const Folder = ({
           </div>
         )}
       </div>
-
+        
       {isOpen ? folderComponent : null}
     </>
   );
