@@ -13,6 +13,9 @@ import {
 } from 'react';
 
 import { Prompt } from '@/types/prompt';
+import { Plugin } from '@/types/plugin';
+import { useTranslation } from 'next-i18next';
+import { Message } from '@/types/chat';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 
@@ -21,6 +24,9 @@ import { PromptModal } from './PromptModal';
 
 interface Props {
   prompt: Prompt;
+  onSend: (message: Message, plugin: Plugin | null) => void;
+  onRegenerate: () => void;
+  onScrollDownClick: () => void;
 }
 
 export const PromptComponent = ({ prompt }: Props) => {
@@ -67,6 +73,28 @@ export const PromptComponent = ({ prompt }: Props) => {
     }
   };
 
+    var [content, setContent] = useState<string>();
+    const { t } = useTranslation('chat');
+    const [plugin, setPlugin] = useState<Plugin | null>(null);
+
+    const handleSend = () => {
+      //if (messageIsStreaming) {
+        //return;
+      //}
+  
+      if (!content) {
+      alert(t('Please enter a message'));
+      return;
+      }
+  
+      onSend({ role: 'user', content }, plugin);
+      setPlugin(null);
+  
+      //if (window.innerWidth < 640 && textareaRef && textareaRef.current) {
+      //  textareaRef.current.blur();
+      //}
+    };
+
   useEffect(() => {
     if (isRenaming) {
       setIsDeleting(false);
@@ -79,11 +107,18 @@ export const PromptComponent = ({ prompt }: Props) => {
     <div className="relative flex items-center">
       <button
         className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90"
-        draggable="true"
-        onClick={(e) => {
+        draggable={!prompt.system}
+        onClick={(e) => {  
           e.stopPropagation();
-          setShowModal(true);
+          if (!prompt.system) {
+            setShowModal(true);
+          } else {
+            e.preventDefault();
+            content = prompt.content;
+            handleSend();
+          }
         }}
+        
         onDragStart={(e) => handleDragStart(e, prompt)}
         onMouseLeave={() => {
           setIsDeleting(false);
