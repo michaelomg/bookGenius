@@ -16,30 +16,39 @@ import { Prompt } from '@/types/prompt';
 import { Plugin } from '@/types/plugin';
 import { useTranslation } from 'next-i18next';
 import { Message } from '@/types/chat';
+import HomeContext from '@/pages/api/home/home.context';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 
 import PromptbarContext from '../PromptBar.context';
 import { PromptModal } from './PromptModal';
+import { Chat } from '@/components/Chat/Chat';
 
 interface Props {
   prompt: Prompt;
-  onSend: (message: Message, plugin: Plugin | null) => void;
+  onSend: (message: Message) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
 }
 
-export const PromptComponent = ({ prompt }: Props) => {
+export const PromptComponent = ({ prompt, onSend }: Props) => {
   const {
     dispatch: promptDispatch,
     handleUpdatePrompt,
     handleDeletePrompt,
   } = useContext(PromptbarContext);
 
+  const {
+    state: { messageIsStreaming},
+    dispatch: homeDispatch,
+  } = useContext(HomeContext);
+
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState('');
+  const { t } = useTranslation('chat');
+  const [plugin, setPlugin] = useState<Plugin | null>(null);
 
   const handleUpdate = (prompt: Prompt) => {
     handleUpdatePrompt(prompt);
@@ -73,27 +82,18 @@ export const PromptComponent = ({ prompt }: Props) => {
     }
   };
 
-    var [content, setContent] = useState<string>();
-    const { t } = useTranslation('chat');
-    const [plugin, setPlugin] = useState<Plugin | null>(null);
-
-    const handleSend = () => {
-      //if (messageIsStreaming) {
-        //return;
-      //}
-  
-      if (!content) {
-        alert(t('Please enter a message'));
-      return;
+  const handleSendToAPI = async () => {
+      if (messageIsStreaming) {
+        return;
       }
   
-      onSend({ role: 'user', content }, plugin);
+      await onSend({ role: 'user', content: prompt.name,});
       setPlugin(null);
   
       //if (window.innerWidth < 640 && textareaRef && textareaRef.current) {
       //  textareaRef.current.blur();
       //}
-    };
+  };
 
   useEffect(() => {
     if (isRenaming) {
@@ -105,6 +105,7 @@ export const PromptComponent = ({ prompt }: Props) => {
 
   return (
     <div className="relative flex items-center">
+      
       <button
         className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90"
         draggable={!prompt.system}
@@ -114,8 +115,7 @@ export const PromptComponent = ({ prompt }: Props) => {
             setShowModal(true);
           } else {
             e.preventDefault();
-            content = prompt.content;
-            handleSend();
+            handleSendToAPI();
           }
         }}
         
@@ -126,6 +126,7 @@ export const PromptComponent = ({ prompt }: Props) => {
           setRenameValue('');
         }}
       >
+        
         <IconBulbFilled size={18} />
 
         <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all pr-4 text-left text-[12.5px] leading-3">
@@ -160,6 +161,7 @@ export const PromptComponent = ({ prompt }: Props) => {
           onUpdatePrompt={handleUpdate}
         />
       )}
+      
     </div>
   );
 };

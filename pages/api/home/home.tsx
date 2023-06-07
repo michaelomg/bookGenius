@@ -15,7 +15,7 @@ import {
   cleanConversationHistory,
   cleanSelectedConversation,
 } from '@/utils/app/clean';
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE, DEFAULT_MODEL } from '@/utils/app/const';
 import {
   saveConversation,
   saveConversations,
@@ -41,10 +41,10 @@ import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
 
-/*import {
+import {
   standardFolders,
   standardPrompts,
-} from '@/utils/data/folders';*/
+} from '@/utils/data/settings';
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
@@ -301,26 +301,7 @@ const Home = ({
     if (folders) {
       dispatch({ field: 'folders', value: JSON.parse(folders) });
     } else {
-      const standardFolders = [
-          {
-              id: 1,
-              name: '1 Discover',
-              type: "prompt",
-              system: true,
-          },
-          {
-              id: 2,
-              name: '2 Inspect',
-              type: "prompt",
-              system: true,
-          },
-          {
-              id: 3,
-              name: '3 Action',
-              type: "prompt",
-              system: true,
-          },
-      ];
+      
       dispatch({ field: 'folders', value: standardFolders});
     } 
 
@@ -328,22 +309,6 @@ const Home = ({
     if (prompts) {
       dispatch({ field: 'prompts', value: JSON.parse(prompts) });
     } else {
-      const standardPrompts = [
-          {
-              id: uuidv4(),
-              name: 'test',
-              description: "test",
-              content: 'test',
-              model: {
-                  id: "gpt-3.5-turbo",
-                  name: "GPT-3.5",
-                  maxLength: 12000,
-                  tokenLimit: 4000
-                },
-              folderId: 1,
-              system: true,
-          },
-      ];
         dispatch({ field: 'prompts', value: standardPrompts});
     }
 
@@ -442,11 +407,11 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const defaultModelId =
-    (process.env.DEFAULT_MODEL &&
+    (DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(
-        process.env.DEFAULT_MODEL as OpenAIModelID,
+        DEFAULT_MODEL as OpenAIModelID,
       ) &&
-      process.env.DEFAULT_MODEL) ||
+      DEFAULT_MODEL) ||
     fallbackModelID;
 
   let serverSidePluginKeysSet = false;
